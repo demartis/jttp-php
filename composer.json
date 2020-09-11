@@ -2,7 +2,7 @@
     "name": "demartis/jttp",
     "description": "PHP implementation of JTTP standard protocol for REST",
     "type": "library",
-    "license": "BSD 2-Clause",
+    "license": "BSD-2-Clause",
     "authors": [
         {
             "name": "Riccardo De Martis",
