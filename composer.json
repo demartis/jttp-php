@@ -1,0 +1,22 @@
+{
+    "name": "demartis/jttp",
+    "description": "PHP implementation of JTTP standard protocol for REST",
+    "type": "library",
+    "license": "BSD 2-Clause",
+    "authors": [
+        {
+            "name": "Riccardo De Martis",
+            "email": "riccardo@demartis.it"
+        }
+    ],
+    "require": {
+        "php": ">=7.1",
+        "ext-json": "*",
+        "symfony/http-foundation": "^3.4 || ^4.0 || ^5.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Jttp": "src"
+        }
+    }
+}
