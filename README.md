@@ -9,11 +9,14 @@ A simple PHP implementation of the [JTTP specification](https://github.com/demar
 
 ## Response
 ```php
-use Jttp\Jttp;
+use Jttp\JttpResponse;
 
 $data = ['field'=>'dummy data'];
-$success = Jttp::success(200, "OK", $data);
+$success = JttpResponse::ok($data);
 
-$error = Jttp::error(401, null, ['Not cool.']);
+$success = JttpResponse::success(200, "OK", $data);
+
+$error = JttpResponse::error(401, null, ['Not cool.']);
+$errorWithMessage = JttpResponse::error(401, 'not authorized', ['Not cool.']);
 ```
 

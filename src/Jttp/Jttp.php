@@ -17,7 +17,7 @@ namespace Jttp;
 use Jttp\Exception\InternalJttpException;
 use Jttp\Exception\MalformedJttpException;
 
-class Jttp
+class Jttp implements JttpExposedMethodsInterface
 {
     public const STATUS_SUCCESS = 'success';
     public const STATUS_ERROR   = 'error';
@@ -141,4 +141,13 @@ class Jttp
         json_decode($string);
         return (json_last_error() == JSON_ERROR_NONE);
     }
+
+    /**
+     * @return int
+     */
+    public function getCode(): int
+    {
+        return $this->code;
+    }
+
 }
