@@ -17,5 +17,18 @@ $success = JttpResponse::success(200, "OK", $data);
 
 $error = JttpResponse::error(401, null, ['Not cool.']);
 $errorWithMessage = JttpResponse::error(401, 'not authorized', ['Not cool.']);
+
+
 ```
+
+Create Jttp object from JttpResponse:
+
+```php
+use Jttp\Jttp;
+use Jttp\JttpResponse;
+$data = ['field'=>'dummy data'];
+$responseOkWithData = JttpResponse::ok($data);
+$jttp = Jttp::createFromResponse($responseOkWithData);
+```
+
 
