@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 class JttpResponseTest extends TestCase
 {
     protected $data;
+    protected $fullResponseOk;
     protected $ok;
     protected $okWithData;
     protected $responseOk;
@@ -22,6 +23,14 @@ class JttpResponseTest extends TestCase
                 'tags' => array(1, 3, 11),
             ),
         );
+
+        $this->fullResponseOk = array(
+            "status" => "success",
+            "code" => 200,
+            "message"=> "OK",
+            "data"=> $this->data
+        );
+
 
         $this->ok = new JttpResponse(Jttp::ok());
         $this->okWithData = new JttpResponse(Jttp::ok($this->data));
@@ -64,6 +73,15 @@ class JttpResponseTest extends TestCase
         $jttp = Jttp::createFromResponse($this->responseOkWithData);
         $content = json_decode($this->responseOkWithData->getContent(), true);
         $this->assertEquals($jttp->toArray(),$content);
+    }
+
+    public function testCreateFromJttpArray(){
+
+        $jttp = Jttp::createFromJttpArray($this->fullResponseOk);
+        $this->assertEquals($jttp->toArray(), $this->fullResponseOk);
+        $this->assertEquals($jttp->getData(), $this->data);
+        $this->assertTrue($jttp->isSuccess());
+        $this->assertFalse($jttp->isError());
     }
 
 }

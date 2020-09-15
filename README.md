@@ -31,4 +31,25 @@ $responseOkWithData = JttpResponse::ok($data);
 $jttp = Jttp::createFromResponse($responseOkWithData);
 ```
 
+Create Jttp object from simple response array:
+
+```php
+use Jttp\Jttp;
+use Jttp\JttpResponse;
+$res =  array(
+    "status" => "success",
+    "code" => 200,
+    "message"=> "OK",
+    "data"=> ['field'=>'dummy data']
+);
+
+$jttp = Jttp::createFromJttpArray($res);
+
+// get status
+$jttp->getStatus(); // 'success'
+$jttp->isSuccess(); // true
+$jttp->getData(); // ['field'=>'dummy data']
+
+```
+
 

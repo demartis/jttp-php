@@ -153,6 +153,11 @@ class Jttp implements JttpExposedMethodsInterface
 
         // @todo check $response->getStatusCode() and $content[self::FIELD_CODE] comparison
 
+        return self::createFromJttpArray($content);
+    }
+
+    public static function createFromJttpArray($content): Jttp
+    {
         $status = $content[self::FIELD_STATUS];
         return new static(
             $status,
@@ -160,8 +165,7 @@ class Jttp implements JttpExposedMethodsInterface
             $content[self::FIELD_MESSAGE] ?? HttpUtils::getHttpStatus($content[self::FIELD_CODE]),
             $status == self::STATUS_SUCCESS ? $content[self::FIELD_DATA] : null,
             $status == self::STATUS_ERROR ? $content[self::FIELD_ERROR] : null
-         );
-
+        );
     }
 
     private static function isValidContent($content){
@@ -186,6 +190,14 @@ class Jttp implements JttpExposedMethodsInterface
 
     }
 
+    public function isSuccess(){
+        return $this->status === self::STATUS_SUCCESS;
+    }
+
+    public function isError(){
+        return $this->status === self::STATUS_ERROR;
+    }
+
     /**
      * @return int
      */
@@ -193,5 +205,38 @@ class Jttp implements JttpExposedMethodsInterface
     {
         return $this->code;
     }
+
+    /**
+     * @return string
+     */
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getData(): ?array
+    {
+        return $this->data;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getError(): ?array
+    {
+        return $this->error;
+    }
+
 
 }
