@@ -22,12 +22,13 @@ class JttpResponseTest extends TestCase
                 'tags' => array(1, 3, 11),
             ),
         );
-        
+
         $this->ok = new JttpResponse(Jttp::ok());
         $this->okWithData = new JttpResponse(Jttp::ok($this->data));
 
         $this->responseOk = JttpResponse::ok();
         $this->responseOkWithData = JttpResponse::ok($this->data);
+
 
     }
 
@@ -56,4 +57,13 @@ class JttpResponseTest extends TestCase
         $this->assertEquals(Jttp::STATUS_SUCCESS, json_decode($this->responseOkWithData->getContent(),true)['status']);
         $this->assertTrue($this->responseOkWithData->isOk());
     }
+
+
+    public function testCreateFromResponse(){
+
+        $jttp = Jttp::createFromResponse($this->responseOkWithData);
+        $content = json_decode($this->responseOkWithData->getContent(), true);
+        $this->assertEquals($jttp->toArray(),$content);
+    }
+
 }

@@ -2,12 +2,11 @@
 
 A simple PHP implementation of the [JTTP specification](https://github.com/demartis/jttp).
 
+- [GitHub project](https://github.com/demartis/jttp-php)
+- [Composer package](https://packagist.org/packages/demartis/jttp)
 
 ## Usage
-```php
-```
 
-## Response
 ```php
 use Jttp\JttpResponse;
 

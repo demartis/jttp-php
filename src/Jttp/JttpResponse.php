@@ -5,20 +5,16 @@ namespace Jttp;
 
 
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class JttpResponse extends JsonResponse implements JttpExposedMethodsInterface
 {
-    /** @var Jttp */
-    protected $jttp;
-
     /**
      * JttpResponse constructor.
      * @param Jttp $jttp
      */
     public function __construct(Jttp $jttp)
     {
-        $this->jttp = $jttp;
-
         $data = $jttp->toArray();
         $statusCode = $jttp->getCode();
         $headers = [];
@@ -38,6 +34,5 @@ class JttpResponse extends JsonResponse implements JttpExposedMethodsInterface
     public static function error(int $statusCode, ?string $statusCodeMessage = null, array $error = null){
         return new static(Jttp::error($statusCode, $statusCodeMessage, $error));
     }
-
 
 }

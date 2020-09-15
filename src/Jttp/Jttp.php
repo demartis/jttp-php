@@ -16,6 +16,8 @@ namespace Jttp;
 
 use Jttp\Exception\InternalJttpException;
 use Jttp\Exception\MalformedJttpException;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class Jttp implements JttpExposedMethodsInterface
 {
@@ -140,6 +142,48 @@ class Jttp implements JttpExposedMethodsInterface
     function isValidJson($string) {
         json_decode($string);
         return (json_last_error() == JSON_ERROR_NONE);
+    }
+
+    public static function createFromResponse(JsonResponse $response): Jttp
+    {
+
+        $statusCode = $response->getStatusCode();
+        $content = json_decode($response->getContent(), true) ?? $response->getContent();
+        self::isValidContent($content);
+
+        // @todo check $response->getStatusCode() and $content[self::FIELD_CODE] comparison
+
+        $status = $content[self::FIELD_STATUS];
+        return new static(
+            $status,
+            $content[self::FIELD_CODE],
+            $content[self::FIELD_MESSAGE] ?? HttpUtils::getHttpStatus($content[self::FIELD_CODE]),
+            $status == self::STATUS_SUCCESS ? $content[self::FIELD_DATA] : null,
+            $status == self::STATUS_ERROR ? $content[self::FIELD_ERROR] : null
+         );
+
+    }
+
+    private static function isValidContent($content){
+        if(!isset($content[self::FIELD_STATUS])){
+            throw new MalformedJttpException(sprintf('Missing field %s.', self::FIELD_STATUS));
+        }
+        if(!isset($content[self::FIELD_CODE])){
+            throw new MalformedJttpException(sprintf('Missing field %s.', self::FIELD_CODE));
+        }
+        if(! (isset($content[self::FIELD_DATA]) || isset($content[self::FIELD_ERROR]))){
+            throw new MalformedJttpException(sprintf('Missing field %s or %s.', self::FIELD_DATA, self::FIELD_ERROR));
+        }
+
+        switch ($content[self::FIELD_STATUS]){
+            case self::STATUS_ERROR:
+            case self::STATUS_SUCCESS:
+                //ok
+                break;
+            default:
+                throw new MalformedJttpException(sprintf('%s field can only be %s or %s.', self::FIELD_STATUS, self::STATUS_SUCCESS, self::STATUS_ERROR));
+        }
+
     }
 
     /**
