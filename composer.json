@@ -1,5 +1,5 @@
 {
-    "name": "demartis/jttp",
+    "name": "etnynl/jttp",
     "description": "PHP implementation of JTTP standard protocol for REST",
     "type": "library",
     "license": "BSD-2-Clause",

@@ -1,9 +1,9 @@
 # JTTP
 
-A simple PHP implementation of the [JTTP specification](https://github.com/demartis/jttp).
+A simple PHP implementation of the [JTTP specification](https://github.com/etnynl/jttp).
 
-- [GitHub project](https://github.com/demartis/jttp-php)
-- [Composer package](https://packagist.org/packages/demartis/jttp)
+- [GitHub project](https://github.com/etnynl/jttp-php)
+- [Composer package](https://packagist.org/packages/etnynl/jttp)
 
 ## Usage
 
