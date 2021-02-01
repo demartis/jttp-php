@@ -1,6 +1,6 @@
 <?php
+
 /**
- *
  * This file is part of a repository on GitHub.
  *
  * (c) Riccardo De Martis <riccardo@demartis.it>
@@ -9,7 +9,6 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
  */
 
 namespace Jttp;
@@ -22,31 +21,42 @@ use Symfony\Component\HttpFoundation\Response;
 class Jttp implements JttpExposedMethodsInterface
 {
     public const STATUS_SUCCESS = 'success';
-    public const STATUS_ERROR   = 'error';
+    public const STATUS_ERROR = 'error';
 
-    public const FIELD_STATUS  = 'status';
-    public const FIELD_CODE    = 'code';
+    public const FIELD_STATUS = 'status';
+    public const FIELD_CODE = 'code';
     public const FIELD_MESSAGE = 'message';
-    public const FIELD_DATA    = 'data';
-    public const FIELD_ERROR   = 'error';
+    public const FIELD_DATA = 'data';
+    public const FIELD_ERROR = 'error';
 
-    /** @var string success|error */
+    /**
+     * @var string success|error
+     */
     protected $status;
 
-    /** @var int HTTP Status code */
+    /**
+     * @var int HTTP Status code
+     */
     protected $code;
 
-    /** @var string|null HTTP Status text */
+    /**
+     * @var string|null HTTP Status text
+     */
     protected $message;
 
-    /** @var array|null success response content */
+    /**
+     * @var array|null success response content
+     */
     protected $data;
 
-    /** @var array|null optional error response content */
+    /**
+     * @var array|null optional error response content
+     */
     protected $error;
 
     /**
      * JttpResponse constructor.
+     *
      * @param string $status
      * @param int $code
      * @param string|null $message
@@ -55,17 +65,17 @@ class Jttp implements JttpExposedMethodsInterface
      *
      * @throws MalformedJttpException
      */
-    public function __construct(string $status, int $code, ?string $message, ?array $data=null, ?array $error=null)
+    public function __construct(string $status, int $code, ?string $message, ?array $data = null, ?array $error = null)
     {
-        if(!$this->isValidStatus($status)) {
+        if (!$this->isValidStatus($status)) {
             throw new MalformedJttpException('Status does not conform to Jttp spec.');
         }
 
-        if($status==static::STATUS_SUCCESS && !is_null($error)) {
+        if ($status == static::STATUS_SUCCESS && !is_null($error)) {
             throw new MalformedJttpException('Field "error" must be set only in "error" statuses.');
         }
 
-        if($status==static::STATUS_ERROR && !is_null($data)) {
+        if ($status == static::STATUS_ERROR && !is_null($data)) {
             throw new MalformedJttpException('Field "data" must be set only in "success" statuses.');
         }
 
@@ -78,18 +88,18 @@ class Jttp implements JttpExposedMethodsInterface
 
     public function toArray(): array
     {
-        $res=[];
+        $res = [];
 
-        $res[self::FIELD_STATUS]=$this->status;
-        $res[self::FIELD_CODE]=$this->code;
-        $res[self::FIELD_MESSAGE]=$this->message;
+        $res[self::FIELD_STATUS] = $this->status;
+        $res[self::FIELD_CODE] = $this->code;
+        $res[self::FIELD_MESSAGE] = $this->message;
 
-        switch ($this->status){
+        switch ($this->status) {
             case self::STATUS_SUCCESS:
-                $res[self::FIELD_DATA]=$this->data;
+                $res[self::FIELD_DATA] = $this->data;
                 break;
             case self::STATUS_ERROR:
-                $res[self::FIELD_ERROR]=$this->error;
+                $res[self::FIELD_ERROR] = $this->error;
                 break;
             default:
                 throw new InternalJttpException('Unknown status code');
@@ -100,7 +110,8 @@ class Jttp implements JttpExposedMethodsInterface
     }
 
     public function toJson(): string
-    {;
+    {
+        ;
         return json_encode($this->toArray());
     }
 
@@ -110,45 +121,54 @@ class Jttp implements JttpExposedMethodsInterface
             static::STATUS_SUCCESS,
             HttpUtils::getStatusCode200(),
             HttpUtils::getHttpStatus(HttpUtils::getStatusCode200()),
-            $data);
+            $data
+        );
     }
 
-    public static function success(int $statusCode, ?string $statusCodeMessage=null, array $data = null): Jttp
+    public static function success(int $statusCode, ?string $statusCodeMessage = null, array $data = null): Jttp
     {
         return new static(
             static::STATUS_SUCCESS,
             $statusCode,
-            $statusCodeMessage==null? HttpUtils::getHttpStatus($statusCode) : $statusCodeMessage,
-            $data);
+            $statusCodeMessage == null ? HttpUtils::getHttpStatus($statusCode) : $statusCodeMessage,
+            $data
+        );
     }
 
-    public static function error(int $statusCode, ?string $statusCodeMessage=null, array $error = null): Jttp
+    public static function error(int $statusCode, ?string $statusCodeMessage = null, array $error = null): Jttp
     {
         return new static(
             static::STATUS_ERROR,
             $statusCode,
-            $statusCodeMessage==null? HttpUtils::getHttpStatus($statusCode) : $statusCodeMessage,
+            $statusCodeMessage == null ? HttpUtils::getHttpStatus($statusCode) : $statusCodeMessage,
             null,
-            $error);
+            $error
+        );
     }
 
 
     protected function isValidStatus(string $status): bool
     {
-        $validStatuses = array(static::STATUS_SUCCESS, static::STATUS_ERROR);
+        $validStatuses = [
+            static::STATUS_SUCCESS,
+            static::STATUS_ERROR,
+        ];
+
         return \in_array($status, $validStatuses, true);
     }
 
-    function isValidJson($string) {
+    function isValidJson($string)
+    {
         json_decode($string);
+
         return (json_last_error() == JSON_ERROR_NONE);
     }
 
     public static function createFromResponse(JsonResponse $response): Jttp
     {
-
         $statusCode = $response->getStatusCode();
         $content = json_decode($response->getContent(), true) ?? $response->getContent();
+
         self::isValidContent($content);
 
         // @todo check $response->getStatusCode() and $content[self::FIELD_CODE] comparison
@@ -159,6 +179,7 @@ class Jttp implements JttpExposedMethodsInterface
     public static function createFromJttpArray($content): Jttp
     {
         $status = $content[self::FIELD_STATUS];
+
         return new static(
             $status,
             $content[self::FIELD_CODE],
@@ -168,33 +189,36 @@ class Jttp implements JttpExposedMethodsInterface
         );
     }
 
-    private static function isValidContent($content){
-        if(!isset($content[self::FIELD_STATUS])){
+    private static function isValidContent($content)
+    {
+        if (!isset($content[self::FIELD_STATUS])) {
             throw new MalformedJttpException(sprintf('Missing field %s.', self::FIELD_STATUS));
         }
-        if(!isset($content[self::FIELD_CODE])){
+
+        if (!isset($content[self::FIELD_CODE])) {
             throw new MalformedJttpException(sprintf('Missing field %s.', self::FIELD_CODE));
         }
-        if(! (isset($content[self::FIELD_DATA]) || isset($content[self::FIELD_ERROR]))){
+
+        if (!(isset($content[self::FIELD_DATA]) || isset($content[self::FIELD_ERROR]))) {
             throw new MalformedJttpException(sprintf('Missing field %s or %s.', self::FIELD_DATA, self::FIELD_ERROR));
         }
 
-        switch ($content[self::FIELD_STATUS]){
+        switch ($content[self::FIELD_STATUS]) {
             case self::STATUS_ERROR:
             case self::STATUS_SUCCESS:
-                //ok
                 break;
             default:
                 throw new MalformedJttpException(sprintf('%s field can only be %s or %s.', self::FIELD_STATUS, self::STATUS_SUCCESS, self::STATUS_ERROR));
         }
-
     }
 
-    public function isSuccess(){
+    public function isSuccess()
+    {
         return $this->status === self::STATUS_SUCCESS;
     }
 
-    public function isError(){
+    public function isError()
+    {
         return $this->status === self::STATUS_ERROR;
     }
 
@@ -237,6 +261,4 @@ class Jttp implements JttpExposedMethodsInterface
     {
         return $this->error;
     }
-
-
 }
